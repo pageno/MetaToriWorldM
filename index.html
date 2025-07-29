@@ -3,284 +3,287 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>FORMICA LEGION</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbit:wght@800&display=swap" rel="stylesheet">
+  <title>MetaToRI 로그인</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;700&display=swap" rel="stylesheet">
   <style>
-    html,body { height:100%; margin:0; padding:0; font-family:'Orbit','Noto Sans KR',sans-serif; background:#000; }
-    body { min-height:100vh; min-width:100vw; overflow-x:hidden; }
-    /* 배경영상 */
-    #bgVideo {
-      position:fixed; left:0; top:0; width:100vw; height:100vh;
-      min-width:100vw; min-height:100vh;
-      object-fit:cover; z-index:-2; background:#000;
-      filter:brightness(0.96) contrast(1.12) blur(0.4px);
-      pointer-events:none;
-    }
-    body::after {
-      content:''; position:fixed; left:0; top:0; width:100vw; height:100vh; z-index:-1;
-      background:rgba(0,0,0,0.34); pointer-events:none;
-    }
-    /* 인트로 */
-    #introOverlay {
-      position:fixed;z-index:2001;left:0;top:0;width:100vw;height:100vh;
-      background:#000;display:flex;align-items:center;justify-content:center;
-      transition:opacity .7s;animation:introIn 1s;
-    }
-    @keyframes introIn {from{opacity:0;}to{opacity:1;}}
-    #introVideo {width:100vw;height:100vh;object-fit:cover;background:#000;}
-    #skipIntro {
-      position:absolute;right:5vw;bottom:7vh;z-index:2002;
-      background:rgba(30,0,0,.85);border:2px solid #ff2c2c;border-radius:15px;
-      color:#fffbec;font-weight:700;padding:7px 16px;font-size:0.92rem;letter-spacing:.09em;
-      cursor:pointer;text-shadow:0 0 8px #ff2c2c99;box-shadow:0 0 16px #ff2c2c55;transition:.17s;
-    }
-    #skipIntro:hover {filter:brightness(1.13) drop-shadow(0 0 6px #ff2c2c);color:#ffe800;}
-    /* 모바일에서 스킵버튼 더 작게 */
-    @media (max-width:700px) {
-      #skipIntro { font-size:0.81rem; padding:6px 12px; right:3vw; bottom:5vh; border-radius:11px;}
-    }
-    /* 홈 UI */
-    .header-bar, .main-stack, .nav-bottom { opacity:0; visibility:hidden; transition:opacity .4s; }
-    .show-home { opacity:1 !important; visibility:visible !important; transition:opacity .4s;}
-    .header-bar {
-      position:fixed; left:0; top:0; width:100vw; height:60px; z-index:110;
-      display:flex; align-items:center; justify-content:space-between;
-      padding:0 12px 0 8px;
-      background:rgba(20,0,0,0.07);
-      pointer-events:none;
-      box-sizing: border-box;
-      user-select:none;
-    }
-    .header-btn { pointer-events:auto; }
-    .bgm-float-btn {
-      background:rgba(20,0,0,0.95); color:#ffe800; border-radius:100px;
-      border:2px solid #ff2c2c; padding:6px 13px 6px 10px; font-size:1.01rem; font-weight:900;
-      box-shadow:0 0 13px #ff2c2c77,0 0 6px #ffe800cc;
-      cursor:pointer; transition:.13s; display:flex; align-items:center; gap:7px;
-      text-shadow:0 0 10px #ffbb00;
-      filter:drop-shadow(0 0 7px #ffbb0099);
-      opacity:1; pointer-events:auto;
-      border-width:1.7px; margin-top:0; margin-left:0;
-      height:40px; min-width:40px;
-      z-index:120;
-    }
-    .sns-menu-btn {
-      width:44px; height:44px;
-      display:flex; flex-direction:column; align-items:center; justify-content:center;
-      background:rgba(0,0,0,0.11); border:none; border-radius:13px; cursor:pointer;
-      box-shadow:0 0 13px #ffe800bb,0 0 0px #ff2c2c77;
-      transition:.15s; position:relative; pointer-events:auto;
-      z-index:120; margin-top:0; margin-right:0;
-    }
-    .sns-bar {
-      width:23px; height:4px; background:linear-gradient(90deg,#ffe800,#ff2c2c 90%); border-radius:5px;
-      margin:3px 0; box-shadow:0 0 7px #ffbb00a7; transition:.13s;
-    }
-    .sns-modal {
-      position:fixed; top:60px; right:15px; z-index:200;
-      background:#140800f5;
-      border-radius:16px; padding:19px 22px 17px 22px;
-      box-shadow:0 0 22px #ffe800d9, 0 0 44px #ff2c2c33;
-      display:none; flex-direction:column; gap:16px; min-width:145px;
-      border:2px solid #ffe800a7;
-      animation:modalIn .42s;
-      align-items: flex-start;
-    }
-    @keyframes modalIn {from{opacity:0;transform:translateY(-26px) scale(.94);}to{opacity:1;transform:translateY(0) scale(1);}}
-    .sns-modal a {
-      color:#fffbec; font-weight:700; font-size:1.11em; text-decoration:none; display:flex; align-items:center; gap:10px;
-      transition:.14s; padding:2px 0;
-      text-shadow:0 0 9px #ffe800a7, 0 0 13px #0ff5;
-      border-bottom:1px solid #ffbb0033; width:100%;
-    }
-    .sns-modal a:last-child {border-bottom:none;}
-    .sns-modal a:hover {color:#ffe800; text-shadow:0 0 17px #ff2c2c;}
-    .main-stack {
-      width:100vw; min-height:100vh;
-      display:flex; flex-direction:column; align-items:center; justify-content:flex-start;
-      z-index:2;
-      padding-top:13vh;
+    html,body {margin:0; padding:0; width:100vw; height:100vh;}
+    body {
+      background:linear-gradient(130deg,#22293a 30%,#181b24 80%);
+      min-height:100vh;
+      font-family:'Orbitron','Pretendard',sans-serif;
+      color:#f2f7ff;
+      overflow-x:hidden;
       position:relative;
+      font-size: 17px;
     }
-    .logo-glow { margin-bottom:2vh; display:flex; flex-direction:column; align-items:center;
-      animation:logo-pop 2s infinite alternate;}
-    @keyframes logo-pop {0%{filter:drop-shadow(0 0 17px #ffe800cc);}100%{filter:drop-shadow(0 0 44px #ff2c2c);}}
-    .logo-glow img { width:88px; max-width:28vw; border-radius:17px; box-shadow:0 0 30px #fd9b1b80,0 0 7px #000; background:#18100060;}
-    .main-title { margin-top:8px; font-size:3.1rem; font-weight:900;
-      background:linear-gradient(90deg,#ffe800 8%,#ff2c2c 80%,#0ff 120%);
-      background-clip:text;-webkit-background-clip:text;color:transparent;-webkit-text-fill-color:transparent;
-      text-shadow:0 0 48px #ffbb00,0 0 23px #ff2c2c99;
-      filter:drop-shadow(0 0 28px #00ffeaaa); animation:title-neon 1.7s infinite alternate; text-align:center; line-height:1.06;}
-    @keyframes title-neon {0%{filter:drop-shadow(0 0 18px #ffe800bb);}100%{filter:drop-shadow(0 0 48px #00eaffcc);}}
-    .slogan { margin-top:9px; margin-bottom:1px; font-size:2.1rem; color:#ffe800; font-weight:800;
-      text-shadow:0 0 22px #ff2c2c88, 0 0 35px #ffe800cc;
-      animation: slogan-fade 1.6s infinite alternate; letter-spacing:0.01em; text-align:center; filter:drop-shadow(0 0 23px #0ff7); line-height:1.10;}
-    @keyframes slogan-fade {0%{filter:brightness(1);}100%{filter:brightness(1.22);}}
-    .desc-card { margin-top:32px; margin-bottom:18px; background:rgba(12,0,0,0.95); border-radius:21px;
-      box-shadow:0 0 33px #ff2c2c66, 0 0 30px #00fff6cc inset; border:2.7px solid #ffe800b3;
-      padding:25px 17px 22px 17px; max-width:430px; min-width:200px; color:#fffde7; font-size:1.13rem;
-      font-weight:500; text-align:center; line-height:1.85; position:relative; z-index:2; letter-spacing:0.01em;
-      filter:drop-shadow(0 0 21px #ffbb0035); font-family:'Orbit','Noto Sans KR',sans-serif;}
-    .desc-card strong, .desc-card em { color:#ffe800; font-weight:900; text-shadow:0 0 9px #ff2c2c70, 0 0 12px #ffbb00; }
-    .desc-card .hashtag { color:#0ff; font-weight:700; letter-spacing:0.04em;
-      text-shadow:0 0 7px #ffe80099,0 0 8px #00fff6; font-size:1.04em; margin-top:15px; display:block;}
-    .nav-bottom { position:fixed; left:0; bottom:0; width:100vw; z-index:120;
-      display:flex; justify-content:space-around; align-items:center;
-      background:rgba(18,0,0,0.97); box-shadow:0 0 18px #ff2c2c77,0 0 8px #ffe800cc;
-      border-radius:18px 18px 0 0; padding:7px 0 5px 0; border-top:2.1px solid #ffe800b3;
-      font-family:'Orbit','Noto Sans KR',sans-serif; animation:navIn 0.8s; gap:4px;}
-    @keyframes navIn {from{transform:translateY(100%);}to{transform:translateY(0);}}
-    .nav-btn { flex:1; background:linear-gradient(90deg,#ff2c2c,#ffe800 80%); margin:0 4px; border:none;
-      border-radius:16px; color:#111; font-weight:800; font-size:1.07rem; box-shadow:0 0 13px #ffbb00,0 0 9px #ffe80033;
-      padding:8px 0; display:flex; flex-direction:column; align-items:center; justify-content:center;
-      cursor:pointer; transition:.13s; text-shadow:0 0 6px #fff6,0 0 10px #ffe80088; letter-spacing:.02em; min-width:0;}
-    .nav-btn:active {filter:brightness(1.19);}
-    .nav-btn .icon {font-size:1.25em; margin-bottom:2px;}
-    @media (max-width:700px) {
-      .main-title{font-size:2rem;}
-      .slogan{font-size:1.1rem;}
-      .desc-card{font-size:0.97rem; padding:13px 7px;}
-      .logo-glow img{width:54px;}
-      .nav-btn{font-size:0.91rem; padding:7px 0;}
-      .nav-bottom{gap:1px;}
-      .main-stack{padding-top:8vh;}
-      .header-bar{height:54px;}
-      .sns-menu-btn,.bgm-float-btn{height:36px;min-width:36px;}
-      .sns-modal{top:54px;}
+    #particles {
+      position:fixed; left:0; top:0; width:100vw; height:100vh; z-index:0; pointer-events:none;
+    }
+    .center-wrap {
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      min-height:100vh; width:100vw; position:relative; z-index:2;
+    }
+    .intro-group {
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      gap:20px;
+      transition:all 1.1s cubic-bezier(.7,0,.3,1);
+      position:relative; z-index:3; will-change:transform;
+    }
+    .intro-group.shrink {
+      transform: translateY(-58px) scale(0.68);
+      filter:blur(0.3px);
+      margin-bottom: -10px;
+    }
+    .intro-logo {
+      width:78px; height:78px;
+      border-radius:18px;
+      box-shadow:0 0 40px #74f6ff88,0 0 40px #da20ff66;
+      margin-bottom:2px;
+      background:rgba(40,80,180,0.04);
+      opacity:0; transform:scale(0.8);
+      animation:popAppear .7s .2s both;
+    }
+    .intro-group .intro-title {
+      font-size:2.22em; font-weight:900;
+      margin-bottom:0; margin-top:0;
+      background:linear-gradient(92deg,#81a4ff 0%,#ab7cff 65%,#ff7ab7 100%);
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+      letter-spacing:3px; text-align:center;
+      text-shadow:0 0 22px #ab7cff,0 0 8px #81a4ffbb;
+      opacity:0; transform:scale(0.8);
+      animation:popAppear .6s .8s both;
+    }
+    .intro-group .intro-slogan {
+      color:#38e0ff; font-size:1.08em; font-weight:700; letter-spacing:1.2px;
+      text-align:center; margin-top:0; margin-bottom:0;
+      text-shadow:0 0 12px #ff7ab7bb,0 0 5px #6dffd399;
+      opacity:0; transform:scale(0.8);
+      animation:popAppear .6s 1.4s both;
+    }
+    @keyframes popAppear {
+      0% {opacity:0; transform:scale(0.8);}
+      80% {opacity:1; transform:scale(1.05);}
+      100% {opacity:1; transform:scale(1);}
+    }
+    /* 로그인 폼 */
+    .login-box {
+      background:rgba(30,35,60,0.95);
+      box-shadow:0 0 44px #24f6ff18, 0 0 20px #da20ff11, 0 2px 40px #38e0ff33;
+      border-radius:26px;
+      border:2.1px solid #38e0ff44;
+      display:flex; flex-direction:column; align-items:center;
+      padding:2.0em 1.25em 1.6em 1.25em;
+      min-width:220px; width:90vw; max-width:375px;
+      position:relative; margin:0 auto;
+      opacity:0; transform:translateY(55px) scale(0.93);
+      pointer-events:none;
+      transition:all .7s cubic-bezier(.7,0,.3,1);
+      z-index:4;
+      margin-top:-10px;
+    }
+    .login-box.show {
+      opacity:1; transform:translateY(0) scale(1);
+      pointer-events:auto;
+      transition:all .8s cubic-bezier(.7,0,.3,1);
+    }
+    .login-box.spinout {
+      animation: loginSpinOut 1.3s cubic-bezier(.7,0,.3,1.2) both;
+    }
+    @keyframes loginSpinOut {
+      0% {transform:scale(1) rotate(0);}
+      10% {transform:scale(0.96) rotate(18deg);}
+      40% {transform:scale(1.17) rotate(-28deg);}
+      70% {transform:scale(1.07) rotate(360deg);}
+      100% {opacity:0;transform:scale(1.2) rotate(360deg);}
+    }
+    .login-title {
+      color:#81a4ff; font-size:1.13em; font-weight:700; letter-spacing:.02em;
+      margin-bottom:17px; margin-top:3px; text-align:center;
+      text-shadow:0 0 10px #38e0ff40;
+    }
+    .input-field {
+      display:block; width:100%; font-size:1.09em; border-radius:15px;
+      border:2px solid #24f6ff77; background:rgba(255,255,255,0.09);
+      color:#f3f4fa; padding:13px 1em; margin-bottom:1.05em;
+      outline:none; box-shadow:0 0 11px #6dffd388;
+      transition:border .23s, box-shadow .23s;
+      text-align:center;
+      font-family:'Pretendard',sans-serif;
+      font-weight:500;
+      letter-spacing:0.01em;
+    }
+    .input-field:focus {
+      border:2px solid #ab7cff;
+      box-shadow:0 0 18px #ab7cff44;
+      background:rgba(255,255,255,0.13);
+    }
+    .login-btn {
+      width:100%; padding:13px 0; font-size:1.13em; color:#fff;
+      background:linear-gradient(90deg,#24f6ff 0,#da20ff 100%);
+      border:none; border-radius:100px;
+      box-shadow:0 0 22px #24f6ff, 0 0 33px #da20ff66;
+      cursor:pointer; font-family:inherit;
+      font-weight:700; letter-spacing:.01em;
+      margin-top:0.5em; margin-bottom:0.1em;
+      transition:transform 0.13s, box-shadow 0.2s;
+      outline:none;
+    }
+    .login-btn:active {transform:scale(0.97);}
+    #fireworks {
+      pointer-events: none;
+      position: fixed;
+      left: 0; top: 0;
+      width: 100vw; height: 100vh;
+      z-index: 999;
+      display: none;
+    }
+    @media (max-width:540px){
+      .login-box {padding:1.2em 0.4em 1.0em 0.4em;}
+      .intro-title{font-size:1.16em;}
+      body { font-size: 15px;}
     }
   </style>
 </head>
 <body>
-  <!-- 홈 배경 영상 -->
-  <video id="bgVideo" autoplay loop muted playsinline>
-    <source src="https://github.com/formicahg/HG/raw/main/background%20.mp4" type="video/mp4">
-  </video>
-  <!-- 인트로 -->
-  <div id="introOverlay">
-    <video id="introVideo" src="https://github.com/formicahg/HG/raw/main/Intro%20.mp4" autoplay playsinline muted></video>
-    <button id="skipIntro">인트로 건너뛰기</button>
-  </div>
-  <!-- 홈 상단바 -->
-  <div class="header-bar">
-    <button class="bgm-float-btn header-btn" id="bgmToggle"><span id="bgmIcon">🔈</span></button>
-    <button class="sns-menu-btn header-btn" id="snsBtn" aria-label="SNS Menu">
-      <div class="sns-bar"></div>
-      <div class="sns-bar"></div>
-      <div class="sns-bar"></div>
-    </button>
-    <div class="sns-modal" id="snsModal">
-      <a href="https://t.me/FormicaLegion" target="_blank">🐜 텔레그램</a>
-      <a href="https://instagram.com/formicalegion" target="_blank">📸 인스타그램</a>
-      <a href="https://x.com/FormicaLegion" target="_blank">𝕏 트위터</a>
-      <a href="https://formicahg.tistory.com" target="_blank">📝 블로그</a>
+  <canvas id="particles"></canvas>
+  <canvas id="fireworks"></canvas>
+  <div class="center-wrap">
+    <div class="intro-group" id="introGroup">
+      <img src="https://raw.githubusercontent.com/pageno/MetaToRI-Assets/main/Logo.png" alt="로고" class="intro-logo" id="logoEl">
+      <div class="intro-title" id="titleEl">MetaToRI World</div>
+      <div class="intro-slogan" id="sloganEl">Dream Never Fades</div>
     </div>
+    <form class="login-box" id="loginBox" autocomplete="off">
+      <div class="login-title">지갑 주소와 비밀번호로 로그인</div>
+      <input type="text" class="input-field" id="walletAddress" placeholder="지갑 주소를 입력하세요" required>
+      <input type="password" class="input-field" id="password" placeholder="비밀번호를 입력하세요" required>
+      <button type="submit" class="login-btn" id="loginBtn">로그인</button>
+    </form>
   </div>
-  <!-- 중앙 상단 로고+타이틀+슬로건+설명 -->
-  <div class="main-stack">
-    <div class="logo-glow">
-      <img src="https://github.com/formicahg/HG/raw/main/Logo%20.png" alt="Formica Legion 로고">
-    </div>
-    <div class="main-title">FORMICA LEGION</div>
-    <div class="slogan">Think Big. Carry Big.</div>
-    <div class="desc-card">
-      <strong>Formica Legion — 포르미카 레기온</strong><br><br>
-      코인을 등에 짊어지고, 오늘도 전진하는 <em>개미들의 군단</em>.<br>
-      우리는 <strong>작지만 뭉치면 강합니다.</strong><br>
-      정보를 공유하고, 짐을 나누고, 시장을 함께 걷는 커뮤니티.<br>
-      <span style="color:#00fff6;font-weight:700;">지식도, 밈도, 감성도 함께 운반합니다.</span>
-      <br><br>
-      <span style="color:#ffe800;font-weight:900;">
-        코인 시장에서 살아남고 싶은 개미라면,<br>
-        <span style="color:#ff2c2c;">지금 바로 포르미카 레기온에 합류하세요.</span>
-      </span>
-      <span class="hashtag">#FormicaLegion #포르미카레기온 #개미군단</span>
-    </div>
-  </div>
-  <!-- 하단 네비게이션 -->
-  <nav class="nav-bottom">
-    <button class="nav-btn" onclick="window.open('https://t.me/FormicaLegion')">
-      <span class="icon">🚀</span>합류
-    </button>
-    <button class="nav-btn" onclick="window.open('https://formicahg.tistory.com')">
-      <span class="icon">📰</span>뉴스
-    </button>
-    <button class="nav-btn" onclick="window.open('https://x.com/FormicaLegion')">
-      <span class="icon">🐦</span>팔로우
-    </button>
-    <button class="nav-btn" onclick="window.open('mailto:formicahg@gmail.com')">
-      <span class="icon">💬</span>문의
-    </button>
-  </nav>
-  <!-- 배경 음악 -->
-  <audio id="bgmAudio" src="https://github.com/formicahg/HG/raw/main/%ED%8F%AC%EB%A5%B4%EB%AF%B8%EC%B9%B4%20%EB%A0%88%EA%B8%B0%EC%98%A8.mp3" loop></audio>
   <script>
-    // 인트로 끝날 때만 홈 UI 보이기!
-    const introOverlay = document.getElementById('introOverlay');
-    const introVideo = document.getElementById('introVideo');
-    const skipIntro = document.getElementById('skipIntro');
-    function showHome() {
-      introOverlay.style.opacity='0';
-      setTimeout(()=>{
-        introOverlay.style.display='none';
-        // 홈 UI 보이기
-        document.querySelector('.header-bar').classList.add('show-home');
-        document.querySelector('.main-stack').classList.add('show-home');
-        document.querySelector('.nav-bottom').classList.add('show-home');
-      },500);
+    // 네온 파티클 배경
+    const canvas = document.getElementById('particles');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+    let w = window.innerWidth, h = window.innerHeight;
+    function resizeCanvas() { w = window.innerWidth; h = window.innerHeight; canvas.width = w; canvas.height = h; }
+    window.addEventListener('resize', resizeCanvas); resizeCanvas();
+    function randomColor() {
+      const colors = ['#2cdcff', '#d720ff', '#ffde59', '#66f2ff', '#ff00cc', '#a3ffe8'];
+      return colors[Math.floor(Math.random() * colors.length)];
     }
-    introVideo.onended = showHome;
-        skipIntro.onclick = showHome;
+    function createParticle() {
+      return {
+        x: Math.random() * w, y: Math.random() * h,
+        r: Math.random() * 2.2 + 1.2,
+        dx: (Math.random() - 0.5) * 0.6,
+        dy: Math.random() * 1 + 0.2,
+        alpha: Math.random() * 0.7 + 0.3,
+        color: randomColor()
+      }
+    }
+    function animateParticles() {
+      ctx.clearRect(0, 0, w, h);
+      for (let i = 0; i < particles.length; i++) {
+        let p = particles[i];
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, 2 * Math.PI);
+        ctx.fillStyle = p.color;
+        ctx.globalAlpha = p.alpha;
+        ctx.shadowColor = p.color;
+        ctx.shadowBlur = 16;
+        ctx.fill();
+        ctx.globalAlpha = 1;
+        p.y += p.dy; p.x += p.dx; p.alpha -= 0.0015;
+        if (p.y > h + 10 || p.alpha < 0.15) {
+          particles[i] = createParticle(); particles[i].y = -10;
+        }
+      }
+      requestAnimationFrame(animateParticles);
+    }
+    for (let i = 0; i < 44; i++) particles.push(createParticle());
+    animateParticles();
 
-        // BGM 버튼
-        const bgmBtn = document.getElementById('bgmToggle');
-        const bgmAudio = document.getElementById('bgmAudio');
-        let bgmOn = false;
-        bgmBtn.onclick = function() {
-          if(bgmOn){
-            bgmAudio.pause();
-            bgmBtn.innerHTML = '<span id="bgmIcon">🔈</span>';
-            bgmOn = false;
-          }else{
-            bgmAudio.play();
-            bgmBtn.innerHTML = '<span id="bgmIcon">🔊</span>';
-            bgmOn = true;
-          }
-        };
-        // 모바일 자동재생 허용
-        document.body.addEventListener('click',function autoPlayBgm(){
-          if(bgmOn && bgmAudio.paused) bgmAudio.play();
-          document.body.removeEventListener('click',autoPlayBgm);
-        });
+    // 인트로 등장 순차 애니메이션
+    document.getElementById('logoEl').style.opacity = 0;
+    document.getElementById('titleEl').style.opacity = 0;
+    document.getElementById('sloganEl').style.opacity = 0;
+    setTimeout(() => { document.getElementById('logoEl').style.opacity = 1; }, 160);
+    setTimeout(() => { document.getElementById('titleEl').style.opacity = 1; }, 700);
+    setTimeout(() => { document.getElementById('sloganEl').style.opacity = 1; }, 1300);
 
-        // SNS 햄버거버튼 & 네온 모달
-        const snsBtn = document.getElementById('snsBtn');
-        const snsModal = document.getElementById('snsModal');
-        let snsOpen = false;
-        snsBtn.onclick = function(e) {
-          e.stopPropagation();
-          if(!snsOpen){
-            snsModal.style.display = 'flex';
-            snsModal.style.animation = 'modalIn .42s';
-            snsOpen = true;
-          }else{
-            snsModal.style.display = 'none';
-            snsOpen = false;
-          }
-        };
-        // 모달 바깥 클릭시 닫기 (모바일 터치 포함)
-        document.addEventListener('click', function(e){
-          if(snsOpen && !snsModal.contains(e.target) && e.target!==snsBtn){
-            snsModal.style.display = 'none';
-            snsOpen = false;
-          }
-        });
-        // ESC로도 닫기
-        document.addEventListener('keydown',function(e){
-          if(e.key==="Escape" && snsOpen){
-            snsModal.style.display = 'none';
-            snsOpen = false;
-          }
-        });
-      </script>
-    </body>
-    </html>
+    // 위로 shrink, 로그인 박스 등장(간격 조정)
+    setTimeout(() => {
+      document.getElementById('introGroup').classList.add('shrink');
+      setTimeout(() => { document.getElementById('loginBox').classList.add('show'); }, 740);
+    }, 2100);
+
+    // ========== 로그인시 회전+폭죽 효과 ========== //
+    const loginBox = document.getElementById('loginBox');
+    const fireCanvas = document.getElementById('fireworks');
+    const fireCtx = fireCanvas.getContext('2d');
+    let fwWidth = window.innerWidth, fwHeight = window.innerHeight;
+    function resizeFire() { fwWidth = window.innerWidth; fwHeight = window.innerHeight; fireCanvas.width = fwWidth; fireCanvas.height = fwHeight; }
+    window.addEventListener('resize', resizeFire); resizeFire();
+
+    function boomFireworks(centerX, centerY, colorArr) {
+      fireCanvas.style.display = "block";
+      let particles = [];
+      for(let c=0; c<colorArr.length; c++) {
+        for(let i=0;i<13;i++){
+          const angle = (2*Math.PI/13)*i;
+          const speed = 3.5 + Math.random()*2;
+          particles.push({
+            x:centerX, y:centerY,
+            dx:Math.cos(angle)*speed*(0.7+0.6*Math.random()),
+            dy:Math.sin(angle)*speed*(0.8+0.6*Math.random()),
+            r:4+Math.random()*3,
+            alpha:1,
+            color:colorArr[c]
+          });
+        }
+      }
+      let ticks=0;
+      function animFire(){
+        fireCtx.clearRect(0,0,fwWidth,fwHeight);
+        for(let p of particles){
+          fireCtx.globalAlpha = p.alpha;
+          fireCtx.beginPath();
+          fireCtx.arc(p.x,p.y,p.r,0,2*Math.PI);
+          fireCtx.fillStyle = p.color;
+          fireCtx.shadowBlur = 30; fireCtx.shadowColor = p.color;
+          fireCtx.fill();
+          p.x += p.dx; p.y += p.dy;
+          p.alpha -= 0.013; // 더 느리게 사라짐
+        }
+        ticks++;
+        if(ticks<85) requestAnimationFrame(animFire);
+        else {
+          fireCtx.clearRect(0,0,fwWidth,fwHeight);
+          fireCanvas.style.display="none";
+        }
+      }
+      animFire();
+    }
+
+    loginBox.addEventListener('submit', function(e){
+      e.preventDefault();
+      if(!loginBox.classList.contains('spinout')){
+        loginBox.classList.add('spinout');
+
+        // 폭죽 위치: 로그인박스의 화면 중앙
+        const rect = loginBox.getBoundingClientRect();
+        const cx = rect.left + rect.width/2;
+        const cy = rect.top + rect.height/2;
+        boomFireworks(cx, cy, ['#38e0ff','#d720ff','#ffe869','#fff','#6cf6ff']);
+
+        setTimeout(()=>{
+          loginBox.style.display='none';
+          // → 여기서 다음 화면 이동! (예: location.href="home.html";)
+        }, 1310);
+      }
+    });
+  </script>
+</body>
+</html>
